@@ -32,5 +32,5 @@ export function char2mutantStandardFilePath(char: string): string {
 	if (!codes.includes('200d')) codes = codes.filter(x => x !== 'fe0f');
 	codes = codes.filter(x => x && x.length);
 	const fileName = codes.map(x => x!.padStart(4, '0')).join('-');
-	return `${mutantEmojiSvgBase}/${fileName}.png`;
+	return `${mutantEmojiSvgBase}/${fileName}.svg`;
 }
