@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+const hands = "👆👇👈👉👊👋👌👍👎👏👐💅💪🖐🖕🖖🙌🙏🤌🤘🤙🤚🤛🤜🤝🤞🤲🤳☝✊✋✌✍"
+
 const twemojiSvgBase = '/twemoji';
 const fluentEmojiPngBase = '/fluent-emoji';
 const mutantEmojiSvgBase = 'https://cdn.ambrosia.moe/mtnt-code-svg';
@@ -22,7 +24,6 @@ export function char2fluentEmojiFilePath(char: string): string {
 	if (!codes.includes('200d')) codes = codes.filter(x => x !== 'fe0f');
 	codes = codes.filter(x => x && x.length);
 	const fileName = codes.map(x => x!.padStart(4, '0')).join('-');
-	return `${fluentEmojiPngBase}/${fileName}.png`;
 }
 
 export function char2mutantStandardFilePath(char: string): string {
@@ -32,5 +33,10 @@ export function char2mutantStandardFilePath(char: string): string {
 	if (!codes.includes('200d')) codes = codes.filter(x => x !== 'fe0f');
 	codes = codes.filter(x => x && x.length);
 	const fileName = codes.map(x => x!.padStart(4, '0')).join('-');
-	return `${mutantEmojiSvgBase}/${fileName}.svg`;
+	if(hands.includes(char)){
+		return `${mutantEmojiSvgBase}/${fileName}-101651-10162c.svg`;
+	}
+	else{
+		return `${mutantEmojiSvgBase}/${fileName}.svg`;
+	}
 }
