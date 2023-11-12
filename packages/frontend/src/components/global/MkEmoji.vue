@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
-import { char2twemojiFilePath, char2fluentEmojiFilePath } from '@/scripts/emoji-base.js';
+import { char2twemojiFilePath, char2fluentEmojiFilePath, char2mutantStandardFilePath } from '@/scripts/emoji-base.js';
 import { defaultStore } from '@/store.js';
 import { getEmojiName } from '@/scripts/emojilist.js';
 import * as os from '@/os.js';
@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const react = inject<((name: string) => void) | null>('react', null);
 
-const char2path = defaultStore.state.emojiStyle === 'twemoji' ? char2twemojiFilePath : char2fluentEmojiFilePath;
+const char2path = defaultStore.state.emojiStyle === 'mutant' ? char2mutantStandardFilePath : (defaultStore.state.emojiStyle === 'twemoji' ? char2twemojiFilePath : char2fluentEmojiFilePath);
 
 const useOsNativeEmojis = computed(() => defaultStore.state.emojiStyle === 'native');
 const url = computed(() => {
