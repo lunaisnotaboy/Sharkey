@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-const hands = "👆👇👈👉👊👋👌👍👎👏👐💅💪🖐🖕🖖🙌🙏🤌🤘🤙🤚🤛🤜🤝🤞🤲🤳☝✊✋✌✍"
+const hands = "👆👇👈👉👊👋👌👍👎👏👐💅💪🖐🖐️🖕🖖🙌🙏🤌🤘🤙🤚🤛🤜🤝🤞🤲🤳☝️☝✊✋✌️✌✍️✍"
+
+const segoeFallback = "🐵🐒🦍🦧🐶🐕🦮🐕🐩🐱🐈🐯🐴🐎🦄🦓🦌🐮🐂🐃🐄🐷🐖🐽🐑🐐🐪🐫🦙🦒🐘🦏🦛🐭🐹🐰🐿️🦔🐨🦥🦦🦨🦘🦡🦃🐔🐣🐤🐥🐦🦢🦩🐸🐊🦎🐉🦕🦖🐳🐋🐟🐠🐙🐚🐌🦋🐛🐜🐝🐞🦗🦂🦟🦠💐🌸💮🏵️🥀🌺🌻🌼🌷🌱🌳🌿☘️🍀🍂🍃🍇🥭🥝🍅🥥🥔🥕🌽🌶️🥒🥬🥦🧄🧅🍄🥜🌰🍞🥐🥖🥨🥯🥞🧇🧀🥩🥓🍔🍟🌭🥪🌮🌯🥙🧆🥘🍲🥣🥗🍿🧈🧂🥫🍜🍝🍠🍤🍥🥮🥟🥠🥡🦀🦞🦐🦑🦪🍦🧁🥧🍫🍮🍯"
 
 const twemojiSvgBase = '/twemoji';
 const fluentEmojiPngBase = '/fluent-emoji';
 const mutantEmojiSvgBase = 'https://cdn.ambrosia.moe/mtnt-code-svg';
+const segoeEmojiSvgBase = 'https://cdn.ambrosia.moe/segoe-code-svg';
 
 export function char2twemojiFilePath(char: string): string {
 	let codes = Array.from(char, x => x.codePointAt(0)?.toString(16));
@@ -36,7 +39,11 @@ export function char2mutantStandardFilePath(char: string): string {
 	if(hands.includes(char)){
 		return `${mutantEmojiSvgBase}/${fileName}-101651-10162c.svg`;
 	}
-	else{
+	else if(segoeFallback.includes(char)){
+		return `${segoeEmojiSvgBase}/${fileName}.svg`;
+	}
+	else
+	{
 		return `${mutantEmojiSvgBase}/${fileName}.svg`;
 	}
 }
