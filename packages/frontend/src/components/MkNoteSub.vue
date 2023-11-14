@@ -110,6 +110,7 @@ const canRenote = computed(() => ['public', 'home'].includes(props.note.visibili
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
+	meta: Misskey.entities.LiteInstanceMetadata;
 	detail?: boolean;
 	expandAllCws?: boolean;
 
@@ -188,7 +189,7 @@ function react(viaKeyboard = false): void {
 	if (props.note.reactionAcceptance === 'likeOnly') {
 		os.api('notes/reactions/create', {
 			noteId: props.note.id,
-			reaction: '❤️',
+			reaction: props.meta.defaultLike,
 		});
 		const el = reactButton.value as HTMLElement | null | undefined;
 		if (el) {
@@ -218,7 +219,7 @@ function like(): void {
 	showMovedDialog();
 	os.api('notes/reactions/create', {
 		noteId: props.note.id,
-		reaction: '❤️',
+		reaction: props.meta.defaultLike,
 	});
 	const el = reactButton.value as HTMLElement | null | undefined;
 	if (el) {
