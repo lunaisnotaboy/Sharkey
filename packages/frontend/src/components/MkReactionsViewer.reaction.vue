@@ -190,6 +190,7 @@ if (!mock) {
 
 .icon {
 	max-width: 150px;
+	pointer-events: none;
 }
 
 .count {
