@@ -69,27 +69,39 @@ export class ImportNotesProcessorService {
 		}
 	}
 
-	// Function was taken from Firefish and edited to remove renoteId and make it run in only one for loop instead of two
+	// Function was taken from Firefish and modified for our needs
 	@bindThis
-	private async recreateChain(arr: any[]) {
+	private async recreateChain(idField: string, replyField: string, arr: any[]): Promise<any[]> {
 		type NotesMap = {
 			[id: string]: any;
 		};
 		const notesTree: any[] = [];
-		const lookup: NotesMap = {};
+		const noteById: NotesMap = {};
+		const notesWaitingForParent: NotesMap = {};
+
 		for await (const note of arr) {
-			lookup[`${note.id}`] = note;
+			noteById[note[idField]] = note;
 			note.childNotes = [];
-			let parent = null;
-			
-			if (note.replyId == null) {
-				notesTree.push(note);
-			} else {
-				parent = lookup[`${note.replyId}`];
+
+			const children = notesWaitingForParent[note[idField]];
+			if (children) {
+				note.childNotes.push(...children);
 			}
 
-			if (parent) parent.childNotes.push(note);
+			if (note[replyField] == null) {
+				notesTree.push(note);
+				continue;
+			}
+
+			const parent = noteById[note[replyField]];
+			if (parent) {
+				parent.childNotes.push(note);
+			} else {
+				notesWaitingForParent[note[replyField]] ||= [];
+				notesWaitingForParent[note[replyField]].push(note);
+			}
 		}
+
 		return notesTree;
 	}
 
@@ -155,7 +167,8 @@ export class ImportNotesProcessorService {
 				const tweets = Object.keys(fakeWindow.window.YTD.tweets.part0).reduce((m, key, i, obj) => {
 					return m.concat(fakeWindow.window.YTD.tweets.part0[key].tweet);
 				}, []);
-				this.queueService.createImportTweetsToDbJob(job.data.user, tweets);
+				const processedTweets = await this.recreateChain("id_str", "in_reply_to_status_id_str", tweets);
+				this.queueService.createImportTweetsToDbJob(job.data.user, processedTweets, null);
 			} finally {
 				cleanup();
 			}
@@ -222,7 +235,7 @@ export class ImportNotesProcessorService {
 
 			const notesJson = fs.readFileSync(path, 'utf-8');
 			const notes = JSON.parse(notesJson);
-			const processedNotes = await this.recreateChain(notes);
+			const processedNotes = await this.recreateChain("id", "replyId", notes);
 			this.queueService.createImportKeyNotesToDbJob(job.data.user, processedNotes, null);
 			cleanup();
 		}
@@ -430,14 +443,14 @@ export class ImportNotesProcessorService {
 	}
 
 	@bindThis
-	public async processTwitterDb(job: Bull.Job<DbNoteImportToDbJobData>): Promise<void> {
+	public async processTwitterDb(job: Bull.Job<DbKeyNoteImportToDbJobData>): Promise<void> {
 		const tweet = job.data.target;
 		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
 		if (user == null) {
 			return;
 		}
 
-		if (tweet.in_reply_to_status_id_str) return;
+		const parentNote = job.data.note ? await this.notesRepository.findOneBy({ id: job.data.note }) : null;
 
 		async function replaceTwitterUrls(full_text: string, urls: any) {
 			let full_textedit = full_text;
@@ -458,9 +471,9 @@ export class ImportNotesProcessorService {
 		try {
 			const date = new Date(tweet.created_at);
 			const textReplaceURLs = tweet.entities.urls && tweet.entities.urls.length > 0 ? await replaceTwitterUrls(tweet.full_text, tweet.entities.urls) : tweet.full_text;
-			const text = tweet.entities.user_mentions && tweet.entities.user_mentions.length > 0 ? await replaceTwitterMentions(textReplaceURLs, tweet.entities.user_mentions) : textReplaceURLs; 
+			const text = tweet.entities.user_mentions && tweet.entities.user_mentions.length > 0 ? await replaceTwitterMentions(textReplaceURLs, tweet.entities.user_mentions) : textReplaceURLs;
 			const files: MiDriveFile[] = [];
-			
+
 			if (tweet.extended_entities && this.isIterable(tweet.extended_entities.media)) {
 				for await (const file of tweet.extended_entities.media) {
 					if (file.video_info) {
@@ -516,7 +529,8 @@ export class ImportNotesProcessorService {
 					}
 				}
 			}
-			await this.noteCreateService.import(user, { createdAt: date, text: text, files: files });
+			const createdNote = await this.noteCreateService.import(user, { createdAt: date, reply: parentNote, text: text, files: files });
+			if (tweet.childNotes) this.queueService.createImportTweetsToDbJob(user, tweet.childNotes, createdNote.id);
 		} catch (e) {
 			this.logger.warn(`Error: ${e}`);
 		}
