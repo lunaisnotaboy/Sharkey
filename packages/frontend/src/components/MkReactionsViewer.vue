@@ -89,10 +89,16 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 
 	reactions = newReactions;
 
-
+	let emojisToConvert = [];
 	for(let i = 0; i < reactions.length; i++){
-		let name = reactions[i][0].replace(/^:(\w+)(@.*)?:$/, '$1');
-		console.log(name);
+		let name = reactions[i][0].replace(/^:(\w+)(@.*)?:$/, ':$1@.:');
+		if(name.startsWith(':')){
+			name = name.substring(1, name.length - 3);
+			if(!emojisToConvert.includes(name)){
+				emojisToConvert.push(name);
+				console.log(name);
+			}
+		}
 		/*os.api('emoji', {
 			name: name
 		}).then(emoji => {
@@ -102,8 +108,8 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 		});*/
 	}
 
-	console.log(Object.keys(reactions));
-	console.log(Object.values(reactions));
+	//console.log(Object.keys(reactions));
+	//console.log(Object.values(reactions));
 
 }, { immediate: true, deep: true });
 </script>
