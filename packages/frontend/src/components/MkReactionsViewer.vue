@@ -104,7 +104,7 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 					let count = 0;
 					reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
 					reactions = reactions.filter(e => !e[0].includes(`:${name}@`));
-					reactions.push([`:${name}:`, count]);
+					reactions.push([`:${name}@.:`, count]);
 				}).catch(() => {});
 			}
 		}
