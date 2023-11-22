@@ -90,25 +90,39 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 	reactions = newReactions;
 
 	let emojisToConvert = [];
+	let emojisToConvertLocal = [];
 	for(let i = 0; i < reactions.length; i++){
-		let name = reactions[i][0].replace(/^:(\w+)(@.*)?:$/, ':$1@.:');
+		let name = reactions[i][0];
 		if(name.startsWith(':')){
-			name = name.substring(1, name.length - 3);
-			if(!emojisToConvert.includes(name)){
-				emojisToConvert.push(name);
-				console.log(name);
-
-				await os.api('emoji', {
-					name: name
-				}).then(emoji => {
-					let count = 0;
-					reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
-					reactions = reactions.filter(e => !e[0].includes(`:${name}@`));
-					reactions.push([`:${name}@.:`, count]);
-				}).catch(() => {});
+			let strippedName = name.replace(/^:(\w+)(@.*)?:$/, '$1');
+			if(name.endsWith('@.:')){
+				emojisToConvertLocal.push(name.substring(1, name.length - 3));
+			}
+			else if(!emojisToConvertLocal.includes(strippedName) && !emojisToConvert.contains(strippedName)){
+				emojisToConvert.push(strippedName);
 			}
 		}
 	}
+	emojisToConvertLocal.forEach(name => {
+		let count = 0;
+		reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+		reactions = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+		reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
+	});
+	await emojisToConvert.forEach(async name => {
+		await os.api('emoji', {
+			name: name
+		}).then(emoji => {
+			reactions.find(e => e[0].includes(`:${name}@`))[0] = `:${name}@.:`
+
+			//copypaste of above code, TODO: deduplicate code
+			let count = 0;
+			reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+			reactions = reactions.filter(e => !e[0].includes(`:${name}@`) || e[0].endsWith('@.:'));
+			reactions.find(e => e[0] === `:${name}@.:`)[1] = count;
+		}).catch(() => {});
+	});
+
 
 	//console.log(Object.keys(reactions));
 	//console.log(Object.values(reactions));
