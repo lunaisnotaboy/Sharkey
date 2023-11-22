@@ -61,7 +61,7 @@ function onMockToggleReaction(emoji: string, count: number) {
 	emit('mockUpdateMyReaction', emoji, (count - reactions[i][1]));
 }
 
-watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumber]) => {
+watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, maxNumber]) => {
 	let newReactions: [string, number][] = [];
 	hasMoreReactions = Object.keys(newSource).length > maxNumber;
 
@@ -98,14 +98,14 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 				emojisToConvert.push(name);
 				console.log(name);
 
-				os.api('emoji', {
+				await os.api('emoji', {
 					name: name
 				}).then(emoji => {
 					let count = 0;
 					reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
 					reactions = reactions.filter(e => !e[0].includes(`:${name}@`));
 					reactions.push([`:${name}@.:`, count]);
-				});
+				}).catch(() => {});
 			}
 		}
 	}
