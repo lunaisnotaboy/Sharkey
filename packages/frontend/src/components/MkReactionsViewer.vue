@@ -97,15 +97,17 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 			if(!emojisToConvert.includes(name)){
 				emojisToConvert.push(name);
 				console.log(name);
+
+				os.api('emoji', {
+					name: name
+				}).then(emoji => {
+					let count = 0;
+					reactions.filter(e => e[0].includes(`:${name}@`)).forEach(e => count += e[1]);
+					reactions = reactions.filter(e => !e[0].includes(`:${name}@`));
+					reactions.push([`:${name}@.:`, count]);
+				});
 			}
 		}
-		/*os.api('emoji', {
-			name: name
-		}).then(emoji => {
-
-		}).catch(err => {
-
-		});*/
 	}
 
 	//console.log(Object.keys(reactions));
