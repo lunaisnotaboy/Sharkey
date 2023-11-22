@@ -44,16 +44,7 @@ let hasMoreReactions = $ref(false);
 
 
 
-/*for(let i = 0; i < reactions.length; i++){
-	reactions[i]
-	os.api('emoji', {
-		name: name
-	}).then(emoji => {
 
-	}).catch(err => {
-
-	});
-}*/
 
 
 
@@ -97,6 +88,19 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 	}
 
 	reactions = newReactions;
+
+
+	for(let i = 0; i < reactions.length; i++){
+		let name = reactions[i][0].replace(/^:(\w+)(@.*)?:$/, '$1');
+		console.log(name);
+		/*os.api('emoji', {
+			name: name
+		}).then(emoji => {
+
+		}).catch(err => {
+
+		});*/
+	}
 
 	console.log(Object.keys(reactions));
 	console.log(Object.values(reactions));
