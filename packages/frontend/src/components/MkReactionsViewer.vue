@@ -42,8 +42,7 @@ const initialReactions = new Set(Object.keys(props.note.reactions));
 let reactions = $ref<[string, number][]>([]);
 let hasMoreReactions = $ref(false);
 
-console.log(Object.keys(reactions));
-console.log(Object.values(reactions));
+
 
 /*for(let i = 0; i < reactions.length; i++){
 	reactions[i]
@@ -98,6 +97,10 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 	}
 
 	reactions = newReactions;
+
+	console.log(Object.keys(reactions));
+	console.log(Object.values(reactions));
+
 }, { immediate: true, deep: true });
 </script>
 
