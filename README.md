@@ -1,3 +1,12 @@
+## Sharkey: Custard edition for [Café Ambrosia](https://ambrosia.moe)
+adds a few new features and some minor fixes/tweaks
+
+Major changes
+- mutant standard emoji style option
+- merge emoji reactions from other instances
+
+
+
 <div align="center">
 <a href="https://joinsharkey.org/">
 	<img src="https://raw.githubusercontent.com/transfem-org/Sharkey/5180b4093f30e3bf3ff8d6b16751b69ebed9fb12/packages/frontend/assets/sharkey.svg" alt="Sharkey logo" style="border-radius:50%" width="400"/>
