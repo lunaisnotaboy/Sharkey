@@ -98,7 +98,7 @@ watch([() => props.note.reactions, () => props.maxNumber], async ([newSource, ma
 			if(name.endsWith('@.:')){
 				emojisToConvertLocal.push(name.substring(1, name.length - 3));
 			}
-			else if(!emojisToConvertLocal.includes(strippedName) && !emojisToConvert.contains(strippedName)){
+			else if(!emojisToConvertLocal.includes(strippedName) && !emojisToConvert.includes(strippedName)){
 				emojisToConvert.push(strippedName);
 			}
 		}
