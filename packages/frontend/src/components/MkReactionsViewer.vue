@@ -22,6 +22,7 @@ import * as Misskey from 'misskey-js';
 import { inject, watch } from 'vue';
 import XReaction from '@/components/MkReactionsViewer.reaction.vue';
 import { defaultStore } from '@/store.js';
+import * as os from '@/os.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -40,6 +41,22 @@ const initialReactions = new Set(Object.keys(props.note.reactions));
 
 let reactions = $ref<[string, number][]>([]);
 let hasMoreReactions = $ref(false);
+
+console.log(reactions);
+
+
+/*for(let i = 0; i < reactions.length; i++){
+	reactions[i]
+	os.api('emoji', {
+		name: name
+	}).then(emoji => {
+
+	}).catch(err => {
+
+	});
+}*/
+
+
 
 if (props.note.myReaction && !Object.keys(reactions).includes(props.note.myReaction)) {
 	reactions[props.note.myReaction] = props.note.reactions[props.note.myReaction];
