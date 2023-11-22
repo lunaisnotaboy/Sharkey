@@ -42,8 +42,8 @@ const initialReactions = new Set(Object.keys(props.note.reactions));
 let reactions = $ref<[string, number][]>([]);
 let hasMoreReactions = $ref(false);
 
-console.log(reactions["❤"]);
-
+console.log(reactions["heart"]);
+console.log(reactions[":3_pink@eepy.moe:"]);
 
 /*for(let i = 0; i < reactions.length; i++){
 	reactions[i]
