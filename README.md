@@ -4,6 +4,7 @@ adds a few new features and some minor fixes/tweaks
 Major changes
 - mutant standard emoji style option
 - merge emoji reactions from other instances
+- KaTeX support (shamelessly stolen from firefish)
 
 
 
