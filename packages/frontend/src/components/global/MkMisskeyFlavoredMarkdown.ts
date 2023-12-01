@@ -83,13 +83,7 @@ export default function(props: MfmProps) {
 						res.push(t);
 					}
 					res.shift();
-
-					// Don't wrap whitespaces in a span
-					if (text === ' ') {
-						return res;
-					}
-
-					return h('span', res);
+					return res;
 				} else {
 					return [text.replace(/\n/g, ' ')];
 				}
