@@ -5,6 +5,7 @@ Major changes
 - mutant standard emoji style option
 - merge emoji reactions from other instances
 - KaTeX support (shamelessly stolen from firefish)
+- removed mention merging
 
 
 
